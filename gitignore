@@ -1,0 +1,23 @@
+# Virtual Environment
+venv/
+env/
+*.pyc
+__pycache__/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Python byte-compiled files
+*.pyc
+*.pyo
+*.pyd
+
+# Other common files to ignore
+*.log
+*.sql
+*.sqlite

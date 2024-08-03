@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superhero Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .attribute {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ hero_name }}</h1>
+        <p><span class="attribute">Height:</span> {{ height }}</p>
+        <p><span class="attribute">Weight:</span> {{ weight }}</p>
+        <p><span class="attribute">Skin Color:</span> {{ skin_color }}</p>
+        <p><span class="attribute">Powers:</span> {{ powers|join(', ') }}</p>
+        <p><span class="attribute">Weakness:</span> {{ weakness }}</p>
+        <p><span class="attribute">Personality:</span> {{ traits|join(', ') }}</p>
+        <p><span class="attribute">Background:</span> {{ background }}</p>
+        <button onclick="location.reload()">Generate New Hero</button>
+    </div>
+</body>
+</html>
