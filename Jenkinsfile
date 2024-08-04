@@ -5,6 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
         APP_NAME = "superhero-generator"
         DOCKER_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}"
+        KUBECONFIG = credentials('kubeconfig')
     }
     
     stages {
@@ -33,11 +34,23 @@ pipeline {
             }
         }
         
-        stage('Deploy') {
+        stage('Deploy to Kubernetes') {
             steps {
-                // This is where you'd add deployment steps
-                // For example, updating a Kubernetes deployment
-                echo 'Deploying....'
+                script {
+                    // Write kubeconfig to a file
+                    writeFile file: 'kubeconfig', text: KUBECONFIG
+
+                    // Update the deployment YAML with the new image
+                    sh """
+                        sed -i 's|image: .*|image: ${DOCKER_IMAGE}|' kubernetes/deployment.yaml
+                    """
+
+                    // Apply the Kubernetes configurations
+                    sh """
+                        kubectl --kubeconfig=kubeconfig apply -f kubernetes/deployment.yaml
+                        kubectl --kubeconfig=kubeconfig apply -f kubernetes/service.yaml
+                    """
+                }
             }
         }
     }
@@ -45,6 +58,7 @@ pipeline {
     post {
         always {
             sh 'docker logout'
+            sh 'rm -f kubeconfig'
         }
     }
 }

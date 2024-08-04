@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: superhero-generator
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: superhero-generator
+  template:
+    metadata:
+      labels:
+        app: superhero-generator
+    spec:
+      containers:
+      - name: superhero-generator
+        image: ryanabynoe/superhero-generator:latest
+        ports:
+        - containerPort: 5000
