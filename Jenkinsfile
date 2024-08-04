@@ -48,11 +48,11 @@ pipeline {
                             bat 'type temp_token.json'
                             
                             // Write kubeconfig to a file
-                            writeFile file: 'kubeconfig', text: KUBECONFIG
+                            writeFile file: 'config', text: KUBECONFIG
                             
                             // Update kubeconfig with the new token
                             bat '''
-                            powershell -Command "$token = (Get-Content temp_token.json | ConvertFrom-Json).status.token; (Get-Content kubeconfig) -replace '\\\\\\"token\\\\\\".*', '\\\\\\"token\\\\\\": \\\\\\"' + $token + '\\\\\\"' | Set-Content updated_kubeconfig"
+                            powershell -Command "$token = (Get-Content temp_token.json | ConvertFrom-Json).status.token; (Get-Content config) -replace '\\\\\\"token\\\\\\".*', '\\\\\\"token\\\\\\": \\\\\\"' + $token + '\\\\\\"' | Set-Content updated_kubeconfig"
                             '''
                             
                             // Debug: Print first few lines of updated_kubeconfig
