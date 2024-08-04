@@ -42,7 +42,7 @@ pipeline {
                             bat 'aws configure get region'
                             
                             // Update kubeconfig
-                            bat 'aws eks get-token --cluster-name superherogen-cluster > temp_token.json'
+                            bat 'aws eks get-token --cluster-name superherogen_cluster > temp_token.json'
                             
                             // Debug: Print content of temp_token.json
                             bat 'type temp_token.json'
