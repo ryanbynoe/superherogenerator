@@ -7,8 +7,8 @@ pipeline {
         DOCKER_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}"
         AWS_CREDENTIALS = credentials('aws-creds')
         KUBECONFIG = credentials('kubeconfig')
-        CLUSTER_NAME = "superherogen_cluster"
-        AWS_REGION = "us-east-2"  // Replace with your AWS region
+        CLUSTER_NAME = "your-eks-cluster-name"
+        AWS_REGION = "us-east-1"  // Replace with your AWS region
     }
 
     stages {
@@ -21,11 +21,21 @@ pipeline {
         stage('Build Python App') {
             steps {
                 script {
-                    // Assuming you have a requirements.txt file
+                    // Create and activate virtual environment
                     bat 'python -m venv venv'
+                    bat 'venv\\Scripts\\activate.bat && python -m pip install --upgrade pip'
+
+                    // Install dependencies from requirements.txt
                     bat 'venv\\Scripts\\activate.bat && pip install -r requirements.txt'
-                    // Run tests if you have any
-                    bat 'venv\\Scripts\\activate.bat && python -m pytest tests/'
+
+                    // Install pytest explicitly
+                    bat 'venv\\Scripts\\activate.bat && pip install pytest'
+
+                    // List installed packages for debugging
+                    bat 'venv\\Scripts\\activate.bat && pip list'
+
+                    // Run tests using pytest
+                    bat 'venv\\Scripts\\activate.bat && pytest tests/ -v'
                 }
             }
         }
