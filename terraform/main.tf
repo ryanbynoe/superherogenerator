@@ -83,7 +83,7 @@ resource "aws_iam_role_policy_attachment" "eks_registry_policy_attachment" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
-resource "aws_eks_node_group" "eks_nodes" {
+resource "aws_eks_node_group" "superhero-nodes" {
   cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = "superherogen-nodes" # Node group name
   node_role_arn   = aws_iam_role.eks_node_role.arn
