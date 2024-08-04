@@ -112,7 +112,7 @@ resource "aws_eks_node_group" "superherogen-nodes" {
   }
 
   launch_template {
-    id      = "lt-0e738e8f6a66ba511" # Existing launch template ID
+    id      = "lt-029da6ff0842ef8bd" # Existing launch template ID
     version = "$Latest"
   }
 }
