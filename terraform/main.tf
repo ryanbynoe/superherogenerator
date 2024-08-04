@@ -64,6 +64,12 @@ resource "aws_eks_node_group" "eks_nodes" {
   }
 
   instance_types = ["t3.medium"] # Instance type for the nodes
+
+  # Specify the AMI ID for the node group
+  launch_template {
+    id      = aws_launch_template.eks_node_launch_template.id
+    version = "$Latest"
+  }
 }
 
 resource "aws_iam_role" "eks_node_role" {
@@ -96,4 +102,25 @@ resource "aws_iam_role_policy_attachment" "eks_cni_policy_attachment" {
 resource "aws_iam_role_policy_attachment" "eks_registry_policy_attachment" {
   role       = aws_iam_role.eks_node_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_launch_template" "eks_node_launch_template" {
+  name_prefix   = "eks-node-"
+  image_id       = "ami-0a31f06d64a91614b" # Amazon Linux 2 AMI ID
+  instance_type  = "t3.medium"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  # Define the IAM instance profile for the nodes
+  iam_instance_profile {
+    name = aws_iam_instance_profile.eks_node_instance_profile.name
+  }
+}
+
+resource "aws_iam_instance_profile" "eks_node_instance_profile" {
+  name = "eks-node-instance-profile"
+
+  role = aws_iam_role.eks_node_role.name
 }
