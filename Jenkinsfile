@@ -5,7 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
         APP_NAME = "superhero-generator"
         DOCKER_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}"
-        KUBECONFIG = credentials('kubeconfig')
+        AWS_CREDENTIALS = credentials('aws-credentials')
     }
     
     stages {
@@ -30,18 +30,23 @@ pipeline {
                             bat "docker push ${DOCKERHUB_CREDENTIALS_USR}/${APP_NAME}:latest"
                         }
                         
-                        // Deploy to Kubernetes
-                        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
-                            // Update the deployment YAML with the new image
-                            bat "powershell -Command \"(Get-Content kubernetes\\deployment.yaml) -replace 'image: .*', 'image: ${DOCKER_IMAGE}' | Set-Content kubernetes\\deployment.yaml\""
-
-                            // Apply the Kubernetes configurations
-                            bat "kubectl --kubeconfig=%KUBECONFIG_FILE% apply -f kubernetes\\deployment.yaml"
-                            bat "kubectl --kubeconfig=%KUBECONFIG_FILE% apply -f kubernetes\\service.yaml"
+                        // Configure AWS CLI
+                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                            bat 'aws configure set aws_access_key_id %AWS_ACCESS_KEY_ID%'
+                            bat 'aws configure set aws_secret_access_key %AWS_SECRET_ACCESS_KEY%'
+                            bat 'aws configure set region us-east-2'
+                            
+                            // Update kubeconfig
+                            bat 'aws eks get-token --cluster-name superherogen-cluster > temp_token.json'
+                            bat 'powershell -Command "$token = (Get-Content temp_token.json | ConvertFrom-Json).status.token; (Get-Content %KUBECONFIG%) -replace \'exec:.*\', (\'exec: { apiVersion: client.authentication.k8s.io/v1beta1, command: \\\"echo\\\", args: [\\\"$token\\\"] }\') | Set-Content updated_kubeconfig"'
+                            
+                            // Deploy to Kubernetes
+                            bat "kubectl --kubeconfig=updated_kubeconfig apply -f kubernetes\\deployment.yaml"
+                            bat "kubectl --kubeconfig=updated_kubeconfig apply -f kubernetes\\service.yaml"
 
                             // Optional: Print some information about the deployment
-                            bat "kubectl --kubeconfig=%KUBECONFIG_FILE% get deployments"
-                            bat "kubectl --kubeconfig=%KUBECONFIG_FILE% get services"
+                            bat "kubectl --kubeconfig=updated_kubeconfig get deployments"
+                            bat "kubectl --kubeconfig=updated_kubeconfig get services"
                         }
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
@@ -56,6 +61,8 @@ pipeline {
         always {
             script {
                 bat "docker logout"
+                bat "del temp_token.json"
+                bat "del updated_kubeconfig"
             }
         }
         success {
