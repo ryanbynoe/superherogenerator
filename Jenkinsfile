@@ -30,13 +30,19 @@ pipeline {
                         }
                         
                         // Deploy to Kubernetes
-                        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                        withCredentials([string(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CONTENT')]) {
+                            // Write kubeconfig content to a temporary file
+                            writeFile file: 'temp_kubeconfig', text: KUBECONFIG_CONTENT
+
                             // Update the deployment YAML with the new image
                             bat "powershell -Command \"(Get-Content kubernetes\\deployment.yaml) -replace 'image: .*', 'image: ${DOCKER_IMAGE}' | Set-Content kubernetes\\deployment.yaml\""
 
                             // Apply the Kubernetes configurations
-                            bat "kubectl --kubeconfig=%KUBECONFIG% apply -f kubernetes\\deployment.yaml"
-                            bat "kubectl --kubeconfig=%KUBECONFIG% apply -f kubernetes\\service.yaml"
+                            bat "kubectl --kubeconfig=temp_kubeconfig apply -f kubernetes\\deployment.yaml"
+                            bat "kubectl --kubeconfig=temp_kubeconfig apply -f kubernetes\\service.yaml"
+
+                            // Remove the temporary kubeconfig file
+                            bat "del temp_kubeconfig"
                         }
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
