@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # Lists for generating superhero attributes
 ADJECTIVES = ["Super", "Mega", "Ultra", "Mighty", "Wonder", "Amazing", "Incredible", "Spectacular"]
-NOUNS = ["Man","Woman","Boy","Girl","Hero","Savior","Guardian","Protector","Champion","Warrior"]
+NOUNS = ["Man", "Woman", "Boy", "Girl", "Hero", "Savior", "Guardian", "Protector", "Champion", "Warrior"]
 
 # List of background stories
 BACKGROUNDS = [
@@ -31,7 +31,7 @@ BACKGROUNDS = [
     "Reborn with powers following a dramatic resurrection.",
     "Gained extraordinary abilities from an ancient prophecy.",
     "Exposed to a supercharged energy source, developing unique powers.",
-    "Inherited abilities from an ancient warrior’s spirit.",
+    "Inherited abilities from an ancient warrior's spirit.",
     "Accidentally merged with alien technology, acquiring advanced skills.",
     "Developed powers through an intensive and rigorous training regimen.",
     "Discovered hidden abilities through an ancient ritual or ceremony.",
@@ -41,7 +41,7 @@ BACKGROUNDS = [
     "Enhanced by exposure to an experimental energy field.",
     "Accidentally transformed by a mysterious potion.",
     "Became a hero after surviving a cataclysmic event with altered genes.",
-    "Gained powers through a fusion with another dimension’s energy.",
+    "Gained powers through a fusion with another dimension's energy.",
     "Gained abilities after being chosen by an ancient order of heroes.",
     "Received superpowers from a powerful ancient relic.",
     "Gained abilities from an unexpected exposure to a superpowerful artifact.",
@@ -68,68 +68,54 @@ BACKGROUNDS = [
 
 HEIGHTS = [f"{feet}'{inches}" for feet in range(5, 8) for inches in range(12)]
 WEIGHTS = [f"{weight} lbs" for weight in range(100, 301, 5)]
-SKIN_COLORS = ["Fair","Pale","Light","Medium","Tan","Dark","Brown","Black","Olive","Golden"]
+SKIN_COLORS = ["Fair", "Pale", "Light", "Medium", "Tan", "Dark", "Brown", "Black", "Olive", "Golden"]
 
 # List of superhero powers
 POWERS = [
     "Super Strength", "Flight", "Invisibility", "Telekinesis", "Mind Reading",
     "Teleportation", "Energy Projection", "Shapeshifting", "Healing Factor",
-    "Time Manipulation","Elemental Control","Technopathy","Gravity Manipulation",
-    "Force Field Generation",
-    "Sonic Scream",
-    "X-Ray Vision",
-    "Elasticity", "Phasing", "Duplication", "Animal Communication", 
+    "Time Manipulation", "Elemental Control", "Technopathy", "Gravity Manipulation",
+    "Force Field Generation", "Sonic Scream", "X-Ray Vision",
+    "Elasticity", "Phasing", "Duplication", "Animal Communication",
     "Size Alteration", "Magnetism Control",
-    "Precognition", "Empathy", "Weather Control", "Energy Absorption", 
-    "Molecular Manipulation",
-    "Adaptive Evolution", "Portal Creation", "Reality Warping", "Probability Manipulation",
-    "Illusion Creation", "Power Mimicry", "Density Control", 
-    "Astral Projection", "Energy Constructs",
-    "Dimensional Travel", "Superhuman Speed", "Superhuman Agility", 
-    "Superhuman Senses", "Wall-Crawling",
-    "Underwater Breathing", "Poison Immunity", "Radiation Control",
-      "Quantum Manipulation",
-    "Psionic Blasts", "Dream Manipulation", "Memory Manipulation", 
-    "Superhuman Intelligence",
-    "Light Manipulation", "Shadow Manipulation"
+    "Precognition", "Empathy", "Weather Control", "Energy Absorption",
+    "Molecular Manipulation", "Adaptive Evolution", "Portal Creation", "Reality Warping",
+    "Probability Manipulation", "Illusion Creation", "Power Mimicry", "Density Control",
+    "Astral Projection", "Energy Constructs", "Dimensional Travel", "Superhuman Speed",
+    "Superhuman Agility", "Superhuman Senses", "Wall-Crawling",
+    "Underwater Breathing", "Poison Immunity", "Radiation Control", "Quantum Manipulation",
+    "Psionic Blasts", "Dream Manipulation", "Memory Manipulation",
+    "Superhuman Intelligence", "Light Manipulation", "Shadow Manipulation"
 ]
 
 # List of weaknesses
 WEAKNESSES = [
     "Kryptonite", "Fire", "Cold", "Water", "Electricity", "Sonic Waves", "Magic",
     "Sunlight", "Darkness", "Emotional Instability", "Limited Power Duration",
-    "Physical Exhaustion", "Mental Fatigue", "Specific Material", "Energy Depletion", 
-    "Time Limit", "Power Nullification", "Extreme Heat",
-    "Extreme Cold", "Poison", "Radiation", "Oxygen Deprivation", "Sensory Overload",
-      "Phobias",
+    "Physical Exhaustion", "Mental Fatigue", "Specific Material", "Energy Depletion",
+    "Time Limit", "Power Nullification", "Extreme Heat", "Extreme Cold", "Poison",
+    "Radiation", "Oxygen Deprivation", "Sensory Overload", "Phobias",
     "Family/Loved Ones", "Morality", "Pride", "Addiction", "Memory Loss",
-      "Power Instability",
-    "Uncontrollable Transformations", "Ancestral Curse", "Dimensional Interference", 
-    "Psychic Attacks",
-    "Technological Dependency", "Biological Virus", "Soul Fragility", 
-    "Time Paradoxes", "Reality Warps",
-    "Truth Serum", "Guilt", "Past Trauma", "Specific Sound Frequency", 
-    "Electromagnetic Pulses",
-    "Nanite Infection", "Quantum Instability", "Parallel Universe Overlap", 
-    "Cosmic Radiation",
+    "Power Instability", "Uncontrollable Transformations", "Ancestral Curse",
+    "Dimensional Interference", "Psychic Attacks", "Technological Dependency",
+    "Biological Virus", "Soul Fragility", "Time Paradoxes", "Reality Warps",
+    "Truth Serum", "Guilt", "Past Trauma", "Specific Sound Frequency",
+    "Electromagnetic Pulses", "Nanite Infection", "Quantum Instability",
+    "Parallel Universe Overlap", "Cosmic Radiation",
     "Interdimensional Energy", "Mythical Artifacts"
 ]
 
 # List of personality traits
 PERSONALITY_TRAITS = [
     "Courageous", "Compassionate", "Determined", "Intelligent", "Witty", "Stoic",
-    "Energetic", "Calm", "Charismatic", "Humble", "Confident", "Loyal", 
-    "Analytical","Creative", "Patient",
-    "Impulsive", "Cautious", "Optimistic", "Pessimistic", "Honest", 
-    "Secretive", "Sarcastic",
-    "Gentle", "Fierce", "Adaptable", "Stubborn", "Curious", 
-    "Disciplined", "Emotional", "Logical",
-    "Introverted", "Extroverted", "Perfectionist", "Laid-back",
-      "Ambitious", "Modest", "Flamboyant",
-    "Reserved", "Empathetic", "Competitive", "Cooperative", 
-    "Intuitive", "Methodical", "Passionate",
-    "Aloof", "Quirky", "Serious", "Playful", "Responsible", 
-    "Free-spirited"
+    "Energetic", "Calm", "Charismatic", "Humble", "Confident", "Loyal",
+    "Analytical", "Creative", "Patient", "Impulsive", "Cautious", "Optimistic",
+    "Pessimistic", "Honest", "Secretive", "Sarcastic", "Gentle", "Fierce",
+    "Adaptable", "Stubborn", "Curious", "Disciplined", "Emotional", "Logical",
+    "Introverted", "Extroverted", "Perfectionist", "Laid-back", "Ambitious",
+    "Modest", "Flamboyant", "Reserved", "Empathetic", "Competitive", "Cooperative",
+    "Intuitive", "Methodical", "Passionate", "Aloof", "Quirky", "Serious",
+    "Playful", "Responsible", "Free-spirited"
 ]
 
 @app.route('/')
