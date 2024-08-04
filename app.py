@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # Lists for generating superhero attributes
 ADJECTIVES = ["Super", "Mega", "Ultra", "Mighty", "Wonder", "Amazing", "Incredible", "Spectacular"]
-NOUNS = ["Man", "Woman", "Boy", "Girl", "Hero", "Savior", "Guardian", 
+NOUNS = ["Man", "Woman", "Boy", "Girl", "Hero", "Savior", "Guardian",
          "Protector", "Champion", "Warrior"]
 
 # List of background stories
@@ -69,7 +69,7 @@ BACKGROUNDS = [
 
 HEIGHTS = [f"{feet}'{inches}" for feet in range(5, 8) for inches in range(12)]
 WEIGHTS = [f"{weight} lbs" for weight in range(100, 301, 5)]
-SKIN_COLORS = ["Fair", "Pale", "Light", "Medium", "Tan", "Dark", "Brown", "Black", 
+SKIN_COLORS = ["Fair", "Pale", "Light", "Medium", "Tan", "Dark", "Brown", "Black",
                "Olive", "Golden"]
 
 # List of superhero powers
@@ -153,4 +153,3 @@ def generate_superhero():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
-    
