@@ -54,8 +54,8 @@ pipeline {
 
     post {
         always {
-            node {
-                // Clean up resources
+            // Clean up resources
+            script {
                 bat "docker logout"
                 bat "del kubeconfig"
             }
