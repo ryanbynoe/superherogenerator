@@ -7,8 +7,8 @@ pipeline {
         DOCKER_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}"
         AWS_CREDENTIALS = credentials('aws-creds')
         KUBECONFIG = credentials('kubeconfig')
-        CLUSTER_NAME = "your-eks-cluster-name"
-        AWS_REGION = "us-east-1"  // Replace with your AWS region
+        CLUSTER_NAME = "superherogen_cluster"
+        AWS_REGION = "us-east-2"  // Replace with your AWS region
     }
 
     stages {
@@ -18,7 +18,7 @@ pipeline {
             }
         }
 
-        stage('Build Python App') {
+        stage('Build and Test Python App') {
             steps {
                 script {
                     // Create and activate virtual environment
@@ -28,13 +28,13 @@ pipeline {
                     // Install dependencies from requirements.txt
                     bat 'venv\\Scripts\\activate.bat && pip install -r requirements.txt'
 
-                    // Install pytest explicitly
-                    bat 'venv\\Scripts\\activate.bat && pip install pytest'
+                    // Install pytest and flake8
+                    bat 'venv\\Scripts\\activate.bat && pip install pytest flake8'
 
-                    // List installed packages for debugging
-                    bat 'venv\\Scripts\\activate.bat && pip list'
+                    // Lint the Python code
+                    bat 'venv\\Scripts\\activate.bat && flake8 app.py'
 
-                    // Run tests using pytest
+                    // Run unit tests (if any)
                     bat 'venv\\Scripts\\activate.bat && pytest tests/ -v'
                 }
             }
@@ -44,6 +44,25 @@ pipeline {
             steps {
                 script {
                     bat "docker build -t ${DOCKER_IMAGE} ."
+                }
+            }
+        }
+
+        stage('Test Docker Image') {
+            steps {
+                script {
+                    // Run the Docker container
+                    bat "docker run -d --name ${APP_NAME}-test -p 5000:5000 ${DOCKER_IMAGE}"
+                    
+                    // Wait for the app to start
+                    bat 'timeout /t 10'
+
+                    // Test if the app is running
+                    bat 'curl http://localhost:5000'
+
+                    // Stop and remove the container
+                    bat "docker stop ${APP_NAME}-test"
+                    bat "docker rm ${APP_NAME}-test"
                 }
             }
         }
