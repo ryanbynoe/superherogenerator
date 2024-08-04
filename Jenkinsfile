@@ -52,7 +52,7 @@ pipeline {
                             
                             // Update kubeconfig with the new token
                             bat '''
-                            powershell -Command "$token = (Get-Content temp_token.json | ConvertFrom-Json).status.token; (Get-Content kubeconfig) -replace 'exec:.*', ('exec: { apiVersion: client.authentication.k8s.io/v1beta1, command: \\\"echo\\\", args: [\\\"' + $token + '\\\"] }') | Set-Content updated_kubeconfig"
+                            powershell -Command "$token = (Get-Content temp_token.json | ConvertFrom-Json).status.token; (Get-Content kubeconfig) -replace '\\\\\\"token\\\\\\".*', '\\\\\\"token\\\\\\": \\\\\\"' + $token + '\\\\\\"' | Set-Content updated_kubeconfig"
                             '''
                             
                             // Debug: Print first few lines of updated_kubeconfig
