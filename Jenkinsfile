@@ -22,7 +22,7 @@ pipeline {
                     
                     // Push Docker Image
                     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        bat "echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin"
+                        bat "echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% %DOCKER_PASSWORD%"
                         bat "docker push ${DOCKER_IMAGE}"
                         bat "docker push ${DOCKERHUB_CREDENTIALS_USR}/${APP_NAME}:latest"
                     }
