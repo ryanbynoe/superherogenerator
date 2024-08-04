@@ -5,7 +5,8 @@ app = Flask(__name__)
 
 # Lists for generating superhero attributes
 ADJECTIVES = ["Super", "Mega", "Ultra", "Mighty", "Wonder", "Amazing", "Incredible", "Spectacular"]
-NOUNS = ["Man", "Woman", "Boy", "Girl", "Hero", "Savior", "Guardian", "Protector", "Champion", "Warrior"]
+NOUNS = ["Man", "Woman", "Boy", "Girl", "Hero", "Savior", "Guardian", 
+         "Protector", "Champion", "Warrior"]
 
 # List of background stories
 BACKGROUNDS = [
@@ -68,7 +69,8 @@ BACKGROUNDS = [
 
 HEIGHTS = [f"{feet}'{inches}" for feet in range(5, 8) for inches in range(12)]
 WEIGHTS = [f"{weight} lbs" for weight in range(100, 301, 5)]
-SKIN_COLORS = ["Fair", "Pale", "Light", "Medium", "Tan", "Dark", "Brown", "Black", "Olive", "Golden"]
+SKIN_COLORS = ["Fair", "Pale", "Light", "Medium", "Tan", "Dark", "Brown", "Black", 
+               "Olive", "Golden"]
 
 # List of superhero powers
 POWERS = [
@@ -118,6 +120,7 @@ PERSONALITY_TRAITS = [
     "Playful", "Responsible", "Free-spirited"
 ]
 
+
 @app.route('/')
 def generate_superhero():
     height = random.choice(HEIGHTS)
@@ -147,5 +150,7 @@ def generate_superhero():
         traits=traits
     )
 
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+    
