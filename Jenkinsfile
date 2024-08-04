@@ -32,7 +32,7 @@ pipeline {
                         }
                         
                         // Configure AWS CLI and deploy to Kubernetes
-                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                             bat 'aws configure set aws_access_key_id %AWS_ACCESS_KEY_ID%'
                             bat 'aws configure set aws_secret_access_key %AWS_SECRET_ACCESS_KEY%'
                             bat 'aws configure set region us-east-2'
