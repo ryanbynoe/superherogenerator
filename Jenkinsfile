@@ -33,8 +33,23 @@ pipeline {
                 script {
                     bat 'venv\\Scripts\\activate.bat && pip install -r requirements.txt'
                     bat 'start /B cmd /c "venv\\Scripts\\activate.bat && python app.py > flask.log 2>&1"'
-                    bat 'timeout /t 10'  // Wait for the app to start
-                    bat 'curl http://localhost:5000 || echo Flask app is not responding'
+                    
+                    // Wait for the Flask app to start (max 30 seconds)
+                    def maxAttempts = 30
+                    def isAppRunning = false
+                    for (int i = 0; i < maxAttempts; i++) {
+                        sleep 1
+                        def status = bat(script: 'curl -s -o /dev/null -w "%{http_code}" http://localhost:5000', returnStatus: true)
+                        if (status == 0) {
+                            isAppRunning = true
+                            break
+                        }
+                    }
+                    
+                    if (!isAppRunning) {
+                        error "Flask app failed to start within 30 seconds"
+                    }
+                    
                     bat 'type flask.log'  // Display Flask app logs
                 }
             }
@@ -52,7 +67,7 @@ pipeline {
             steps {
                 script {
                     bat "docker run -d --name ${APP_NAME}-test -p 5000:5000 ${DOCKER_IMAGE}"
-                    bat 'timeout /t 10'
+                    sleep 10
                     bat 'curl http://localhost:5000 || echo Docker container is not responding'
                     bat "docker logs ${APP_NAME}-test"
                     bat "docker stop ${APP_NAME}-test"
