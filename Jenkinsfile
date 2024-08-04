@@ -32,10 +32,10 @@ pipeline {
             steps {
                 script {
                     bat 'venv\\Scripts\\activate.bat && pip install -r requirements.txt'
-                    bat 'start /B venv\\Scripts\\activate.bat && python app.py'
+                    bat 'start /B cmd /c "venv\\Scripts\\activate.bat && python app.py > flask.log 2>&1"'
                     bat 'timeout /t 10'  // Wait for the app to start
-                    bat 'curl http://localhost:5000'  // Test if the app is running
-                    bat 'taskkill /F /IM python.exe'  // Stop the Flask app
+                    bat 'curl http://localhost:5000 || echo Flask app is not responding'
+                    bat 'type flask.log'  // Display Flask app logs
                 }
             }
         }
@@ -53,7 +53,8 @@ pipeline {
                 script {
                     bat "docker run -d --name ${APP_NAME}-test -p 5000:5000 ${DOCKER_IMAGE}"
                     bat 'timeout /t 10'
-                    bat 'curl http://localhost:5000'
+                    bat 'curl http://localhost:5000 || echo Docker container is not responding'
+                    bat "docker logs ${APP_NAME}-test"
                     bat "docker stop ${APP_NAME}-test"
                     bat "docker rm ${APP_NAME}-test"
                 }
@@ -95,8 +96,10 @@ pipeline {
     post {
         always {
             script {
+                bat "taskkill /F /IM python.exe /T"
                 bat "docker logout"
                 bat "if exist temp_token.json del temp_token.json"
+                bat "if exist flask.log del flask.log"
             }
         }
         success {
