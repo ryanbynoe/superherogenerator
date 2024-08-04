@@ -8,15 +8,15 @@ api_client = client.ApiClient()
 
 # Define the deployment
 deployment = client.V1Deployment(
-    metadata=client.V1ObjectMeta(name="my-flask-app"),
+    metadata=client.V1ObjectMeta(name="super-hero-app"),
     spec=client.V1DeploymentSpec(
         replicas=1,
         selector=client.V1LabelSelector(
-            match_labels={"app": "my-flask-app"}
+            match_labels={"app": "super-hero-app"}
         ),
         template=client.V1PodTemplateSpec(
             metadata=client.V1ObjectMeta(
-                labels={"app": "my-flask-app"}
+                labels={"app": "super-hero-app"}
             ),
             spec=client.V1PodSpec(
                 containers=[
@@ -40,9 +40,9 @@ api_instance.create_namespaced_deployment(
 
 # Define the service
 service = client.V1Service(
-    metadata=client.V1ObjectMeta(name="my-flask-service"),
+    metadata=client.V1ObjectMeta(name="super-flask-service"),
     spec=client.V1ServiceSpec(
-        selector={"app": "my-flask-app"},
+        selector={"app": "super-hero-app"},
         ports=[client.V1ServicePort(port=5000)]
     )
 )
