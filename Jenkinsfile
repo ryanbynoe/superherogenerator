@@ -1,20 +1,20 @@
 pipeline {
     agent any
-    
+
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
         APP_NAME = "superhero-generator"
         DOCKER_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}"
         KUBECONFIG = credentials('kubeconfig')
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-        
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -22,7 +22,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Push Docker Image') {
             steps {
                 script {
@@ -34,7 +34,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Deploy to Kubernetes') {
             steps {
                 script {
@@ -51,11 +51,14 @@ pipeline {
             }
         }
     }
-    
+
     post {
         always {
-            bat "docker logout"
-            bat "del kubeconfig"
+            node {
+                // Clean up resources
+                bat "docker logout"
+                bat "del kubeconfig"
+            }
         }
     }
 }
