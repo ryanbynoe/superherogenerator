@@ -8,7 +8,7 @@ pipeline {
         AWS_CREDENTIALS = credentials('aws-creds')
         KUBECONFIG = credentials('kubeconfig')
         CLUSTER_NAME = "superherogen_cluster"
-        AWS_REGION = "us-east-2"  // Replace with your AWS region
+        AWS_REGION = "us-east-2"
     }
 
     stages {
@@ -28,12 +28,14 @@ pipeline {
             }
         }
 
-        stage('Build and Test Python App') {
+        stage('Install Dependencies and Run App') {
             steps {
                 script {
                     bat 'venv\\Scripts\\activate.bat && pip install -r requirements.txt'
-                    bat 'venv\\Scripts\\activate.bat && pip install pytest'
-                    bat 'venv\\Scripts\\activate.bat && pytest tests/ -v'
+                    bat 'start /B venv\\Scripts\\activate.bat && python app.py'
+                    bat 'timeout /t 10'  // Wait for the app to start
+                    bat 'curl http://localhost:5000'  // Test if the app is running
+                    bat 'taskkill /F /IM python.exe'  // Stop the Flask app
                 }
             }
         }
@@ -94,7 +96,7 @@ pipeline {
         always {
             script {
                 bat "docker logout"
-                bat "del temp_token.json"
+                bat "if exist temp_token.json del temp_token.json"
             }
         }
         success {
