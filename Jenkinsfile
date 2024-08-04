@@ -32,10 +32,10 @@ pipeline {
             steps {
                 script {
                     bat 'venv\\Scripts\\activate.bat && pip install -r requirements.txt'
-                    bat 'start /B venv\\Scripts\\activate.bat && python app.py'
+                    bat 'start /B cmd /c "venv\\Scripts\\activate.bat && python app.py"'
                     bat 'timeout /t 10'  // Wait for the app to start
                     bat 'curl http://localhost:5000'  // Test if the app is running
-                    bat 'taskkill /F /IM python.exe'  // Stop the Flask app
+                    bat 'taskkill /F /IM python.exe /T'  // Stop the Flask app and its child processes
                 }
             }
         }
@@ -97,6 +97,7 @@ pipeline {
             script {
                 bat "docker logout"
                 bat "if exist temp_token.json del temp_token.json"
+                bat 'taskkill /F /IM python.exe /T'  // Ensure all Python processes are terminated
             }
         }
         success {
