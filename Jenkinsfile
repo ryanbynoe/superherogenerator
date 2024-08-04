@@ -5,7 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
         APP_NAME = "superhero-generator"
         DOCKER_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}"
-        AWS_CREDENTIALS = credentials('aws-credentials')
+        AWS_CREDENTIALS = credentials('aws-creds')
     }
     
     stages {
@@ -31,7 +31,7 @@ pipeline {
                         }
                         
                         // Configure AWS CLI
-                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                             bat 'aws configure set aws_access_key_id %AWS_ACCESS_KEY_ID%'
                             bat 'aws configure set aws_secret_access_key %AWS_SECRET_ACCESS_KEY%'
                             bat 'aws configure set region us-east-2'
