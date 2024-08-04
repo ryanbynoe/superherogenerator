@@ -18,7 +18,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}")
+                    bat "docker build -t ${DOCKER_IMAGE} ."
                 }
             }
         }
@@ -26,9 +26,10 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-                        docker.image("${DOCKER_IMAGE}").push()
-                        docker.image("${DOCKER_IMAGE}").push('latest')
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        bat "echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin"
+                        bat "docker push ${DOCKER_IMAGE}"
+                        bat "docker push ${DOCKERHUB_CREDENTIALS_USR}/${APP_NAME}:latest"
                     }
                 }
             }
@@ -41,15 +42,11 @@ pipeline {
                     writeFile file: 'kubeconfig', text: KUBECONFIG
 
                     // Update the deployment YAML with the new image
-                    sh """
-                        sed -i 's|image: .*|image: ${DOCKER_IMAGE}|' kubernetes/deployment.yaml
-                    """
+                    bat "powershell -Command \"(Get-Content kubernetes\\deployment.yaml) -replace 'image: .*', 'image: ${DOCKER_IMAGE}' | Set-Content kubernetes\\deployment.yaml\""
 
                     // Apply the Kubernetes configurations
-                    sh """
-                        kubectl --kubeconfig=kubeconfig apply -f kubernetes/deployment.yaml
-                        kubectl --kubeconfig=kubeconfig apply -f kubernetes/service.yaml
-                    """
+                    bat "kubectl --kubeconfig=kubeconfig apply -f kubernetes\\deployment.yaml"
+                    bat "kubectl --kubeconfig=kubeconfig apply -f kubernetes\\service.yaml"
                 }
             }
         }
@@ -57,8 +54,8 @@ pipeline {
     
     post {
         always {
-            sh 'docker logout'
-            sh 'rm -f kubeconfig'
+            bat "docker logout"
+            bat "del kubeconfig"
         }
     }
 }
